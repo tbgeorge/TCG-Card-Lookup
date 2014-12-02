@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TCG Card Lookup</string>
+    <string name="magic">Magic: The Gathering</string>
+    <string name="yugioh">Yu-Gi-Oh!</string>
+    <string name="pokemon">Pokemon</string>
+    <string name="wowtcg">World of Warcraft TCG</string>
+    <string name="cardfight">Cardfight Vanguard</string>
+
+
+</resources>

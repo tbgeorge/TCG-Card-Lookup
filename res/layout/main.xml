@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+        >
+<LinearLayout android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:layout_gravity="center">
+    <Button android:id="@+id/magicButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/magic"/>
+    <Button android:id="@+id/yugiohButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/yugioh"/>
+    <Button android:id="@+id/pokemonButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/pokemon"/>
+    <Button android:id="@+id/wowButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wowtcg"/>
+    <Button android:id="@+id/cvButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cardfight"/>
+              </LinearLayout>
+</LinearLayout>
+
