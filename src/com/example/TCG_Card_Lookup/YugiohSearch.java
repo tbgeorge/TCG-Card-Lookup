@@ -22,7 +22,126 @@ public class YugiohSearch extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.yugiohsearch);
         setupUI(findViewById(R.id.main));
+        initSpinners();
 
+        Button searchBtn = (Button) findViewById(R.id.searchBtn);
+        final TextView testURL = (TextView) findViewById(R.id.testURL);
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = formURL();
+                testURL.setText(url);
+            }
+        });
+
+    }
+
+    private String formURL() {
+        String baseURL = "shop.tcgplayer.com/yugioh";
+        String url = baseURL;
+
+        Spinner setSpinner = (Spinner) findViewById(R.id.setSpinner);
+        String set = setSpinner.getSelectedItem().toString();
+
+        EditText productName = (EditText) findViewById(R.id.productName);
+        EditText description = (EditText) findViewById(R.id.description);
+
+        Spinner cardTypeSpinner = (Spinner) findViewById(R.id.cardTypeSpinner);
+        String cardType = cardTypeSpinner.getSelectedItem().toString();
+        Spinner monsterTypeSpinner = (Spinner) findViewById(R.id.monsterTypeSpinner);
+        String monsterType = monsterTypeSpinner.getSelectedItem().toString();
+
+//        List<>
+        CheckBox common = (CheckBox) findViewById(R.id.common);
+        CheckBox rare = (CheckBox) findViewById(R.id.rare);
+        CheckBox superRare = (CheckBox) findViewById(R.id.superRare);
+        CheckBox ultraRare = (CheckBox) findViewById(R.id.ultra);
+        CheckBox secretRare = (CheckBox) findViewById(R.id.secret);
+        CheckBox ultimateRare = (CheckBox) findViewById(R.id.ultimate);
+        CheckBox ghostRare = (CheckBox) findViewById(R.id.ghost);
+
+        CheckBox attrDark = (CheckBox) findViewById(R.id.dark);
+        CheckBox attrDivine = (CheckBox) findViewById(R.id.divine);
+        CheckBox attrEarth = (CheckBox) findViewById(R.id.earth);
+        CheckBox attrFire = (CheckBox) findViewById(R.id.fire);
+        CheckBox attrLight = (CheckBox) findViewById(R.id.light);
+        CheckBox attrWater = (CheckBox) findViewById(R.id.water);
+        CheckBox attrWind = (CheckBox) findViewById(R.id.wind);
+
+        Spinner levelFromSpinner = (Spinner) findViewById(R.id.levelFromSpinner);
+        String levelFrom = levelFromSpinner.getSelectedItem().toString();
+        Spinner levelToSpinner = (Spinner) findViewById(R.id.levelToSpinner);
+        String levelTo = levelToSpinner.getSelectedItem().toString();
+        Spinner attackFromSpinner = (Spinner) findViewById(R.id.attackFromSpinner);
+        String attackFrom = attackFromSpinner.getSelectedItem().toString();
+        Spinner attackToSpinner = (Spinner) findViewById(R.id.attackToSpinner);
+        String attackTo = attackToSpinner.getSelectedItem().toString();
+        Spinner defenseFromSpinner = (Spinner) findViewById(R.id.defenseFromSpinner);
+        String defenseFrom = defenseFromSpinner.getSelectedItem().toString();
+        Spinner defenseToSpinner = (Spinner) findViewById(R.id.defenseToSpinner);
+        String defenseTo = defenseToSpinner.getSelectedItem().toString();
+        Spinner priceConditionSpinner = (Spinner) findViewById(R.id.priceConditionSpinner);
+        String priceCondition = priceConditionSpinner.getSelectedItem().toString();
+        EditText price = (EditText) findViewById(R.id.priceEdit);
+
+        if(set.equalsIgnoreCase("All Sets")) {
+            url += "/product/show?";
+        }
+        else {
+            set = convertSetToURLFriendly(set);
+            url += "/" + set + "?";
+        }
+
+        if(!productName.getText().toString().equalsIgnoreCase(""))
+            url += "ProductName=" + convertStrToURLFriendly(productName.getText().toString()) + "&";
+
+        if(!description.getText().toString().equalsIgnoreCase(""))
+            url += "Description=" + convertStrToURLFriendly(description.getText().toString()) + "&";
+
+        return url;
+    }
+
+    private String convertStrToURLFriendly(String str) {
+        str = str.replace(" ", "+");
+
+        return str;
+    }
+
+    private String convertSetToURLFriendly(String str) {
+        str = str.replace("'", "");
+        str = str.replace(" ", "-");
+        str = str.toLowerCase();
+        return str;
+    }
+
+    //Hide keyboard when tapped outside
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(YugiohSearch.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
+    public void initSpinners() {
         List<String> setArray = new ArrayList<String>();
         setArray.add("All Sets");
         setArray.add("2002 Collectors Tin");
@@ -579,32 +698,6 @@ public class YugiohSearch extends Activity {
         levelRankAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner priceCondition = (Spinner) findViewById(R.id.priceConditionSpinner);
         priceCondition.setAdapter(priceConditionAdapter);
-    }
-
-    //Hide keyboard when tapped outside
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-    }
-
-    public void setupUI(View view) {
-        //Set up touch listener for non-text box views to hide keyboard.
-        if(!(view instanceof EditText)) {
-            view.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(YugiohSearch.this);
-                    return false;
-                }
-            });
-        }
-
-        //If a layout container, iterate over children and seed recursion.
-        if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                View innerView = ((ViewGroup) view).getChildAt(i);
-                setupUI(innerView);
-            }
-        }
     }
 
 }
