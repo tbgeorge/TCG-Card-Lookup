@@ -20,6 +20,7 @@
     <string name="defense">Defense:</string>
     <string name="price">Price:</string>
     <string name="currency">$</string>
+    <string name="search">Search</string>
 
 
 </resources>

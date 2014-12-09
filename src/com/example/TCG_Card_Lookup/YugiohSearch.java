@@ -1,12 +1,13 @@
 package com.example.TCG_Card_Lookup;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.List;
  * Created by Tyler on 12/2/2014.
  */
 public class YugiohSearch extends Activity {
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.yugiohsearch);
+        setupUI(findViewById(R.id.main));
 
-        List<String> setArray =  new ArrayList<String>();
+        List<String> setArray = new ArrayList<String>();
         setArray.add("All Sets");
         setArray.add("2002 Collectors Tin");
         setArray.add("2003 Collectors Tin");
@@ -379,7 +382,7 @@ public class YugiohSearch extends Activity {
         Spinner sets = (Spinner) findViewById(R.id.setSpinner);
         sets.setAdapter(setAdapter);
 
-        List<String> cardTypeArray =  new ArrayList<String>();
+        List<String> cardTypeArray = new ArrayList<String>();
         cardTypeArray.add("All");
         cardTypeArray.add("Main Deck Monster");
         cardTypeArray.add("Extra Deck Monster");
@@ -393,7 +396,7 @@ public class YugiohSearch extends Activity {
         Spinner cardTypes = (Spinner) findViewById(R.id.cardTypeSpinner);
         cardTypes.setAdapter(cardTypeAdapter);
 
-        List<String> monsterTypeArray =  new ArrayList<String>();
+        List<String> monsterTypeArray = new ArrayList<String>();
         monsterTypeArray.add("All");
         monsterTypeArray.add("Aqua");
         monsterTypeArray.add("Beast");
@@ -426,14 +429,182 @@ public class YugiohSearch extends Activity {
         Spinner monsterTypes = (Spinner) findViewById(R.id.monsterTypeSpinner);
         monsterTypes.setAdapter(monsterTypeAdapter);
 
-        List<String> rarityArray =  new ArrayList<String>();
-        rarityArray.add("Common");
-        rarityArray.add("Rare");
-        rarityArray.add("Super Rare");
-        rarityArray.add("Ultra Rare");
-        rarityArray.add("Secret Rare");
-        rarityArray.add("Ultimate Rare");
-        rarityArray.add("Ghost Rare");
+        List<String> levelRankArray = new ArrayList<String>();
+        levelRankArray.add("Any");
+        levelRankArray.add("1");
+        levelRankArray.add("2");
+        levelRankArray.add("3");
+        levelRankArray.add("4");
+        levelRankArray.add("6");
+        levelRankArray.add("7");
+        levelRankArray.add("8");
+        levelRankArray.add("9");
+        levelRankArray.add("10");
+        levelRankArray.add("11");
 
+        ArrayAdapter<String> levelRankAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, levelRankArray);
+
+        levelRankAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner levelRankFrom = (Spinner) findViewById(R.id.levelFromSpinner);
+        Spinner levelRankTo = (Spinner) findViewById(R.id.levelToSpinner);
+        levelRankFrom.setAdapter(levelRankAdapter);
+        levelRankTo.setAdapter(levelRankAdapter);
+
+        List<String> attackArray = new ArrayList<String>();
+        attackArray.add("All");
+        attackArray.add("0");
+        attackArray.add("100");
+        attackArray.add("200");
+        attackArray.add("300");
+        attackArray.add("400");
+        attackArray.add("500");
+        attackArray.add("600");
+        attackArray.add("700");
+        attackArray.add("800");
+        attackArray.add("900");
+        attackArray.add("1000");
+        attackArray.add("1100");
+        attackArray.add("1200");
+        attackArray.add("1300");
+        attackArray.add("1400");
+        attackArray.add("1500");
+        attackArray.add("1600");
+        attackArray.add("1700");
+        attackArray.add("1800");
+        attackArray.add("1900");
+        attackArray.add("2000");
+        attackArray.add("2100");
+        attackArray.add("2200");
+        attackArray.add("2300");
+        attackArray.add("2400");
+        attackArray.add("2500");
+        attackArray.add("2600");
+        attackArray.add("2700");
+        attackArray.add("2800");
+        attackArray.add("2900");
+        attackArray.add("3000");
+        attackArray.add("3100");
+        attackArray.add("3200");
+        attackArray.add("3300");
+        attackArray.add("3400");
+        attackArray.add("3500");
+        attackArray.add("3600");
+        attackArray.add("3700");
+        attackArray.add("3800");
+        attackArray.add("3900");
+        attackArray.add("4000");
+        attackArray.add("4100");
+        attackArray.add("4200");
+        attackArray.add("4300");
+        attackArray.add("4400");
+        attackArray.add("4500");
+        attackArray.add("4600");
+        attackArray.add("4700");
+        attackArray.add("4800");
+        attackArray.add("4900");
+        attackArray.add("5000");
+
+        ArrayAdapter<String> attackAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, attackArray);
+
+        attackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner attackFrom = (Spinner) findViewById(R.id.attackFromSpinner);
+        Spinner attackTo = (Spinner) findViewById(R.id.attackToSpinner);
+        attackFrom.setAdapter(attackAdapter);
+        attackTo.setAdapter(attackAdapter);
+
+        List<String> defenseArray = new ArrayList<String>();
+        defenseArray.add("All");
+        defenseArray.add("0");
+        defenseArray.add("100");
+        defenseArray.add("200");
+        defenseArray.add("300");
+        defenseArray.add("400");
+        defenseArray.add("500");
+        defenseArray.add("600");
+        defenseArray.add("700");
+        defenseArray.add("800");
+        defenseArray.add("900");
+        defenseArray.add("1000");
+        defenseArray.add("1100");
+        defenseArray.add("1200");
+        defenseArray.add("1300");
+        defenseArray.add("1400");
+        defenseArray.add("1500");
+        defenseArray.add("1600");
+        defenseArray.add("1700");
+        defenseArray.add("1800");
+        defenseArray.add("1900");
+        defenseArray.add("2000");
+        defenseArray.add("2100");
+        defenseArray.add("2200");
+        defenseArray.add("2300");
+        defenseArray.add("2400");
+        defenseArray.add("2500");
+        defenseArray.add("2600");
+        defenseArray.add("2700");
+        defenseArray.add("2800");
+        defenseArray.add("2900");
+        defenseArray.add("3000");
+        defenseArray.add("3100");
+        defenseArray.add("3200");
+        defenseArray.add("3300");
+        defenseArray.add("3400");
+        defenseArray.add("3500");
+        defenseArray.add("3600");
+        defenseArray.add("3700");
+        defenseArray.add("3800");
+        defenseArray.add("3900");
+        defenseArray.add("4000");
+
+
+        ArrayAdapter<String> defenseAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, defenseArray);
+
+        defenseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner defenseFrom = (Spinner) findViewById(R.id.defenseFromSpinner);
+        Spinner defenseTo = (Spinner) findViewById(R.id.defenseToSpinner);
+        defenseFrom.setAdapter(defenseAdapter);
+        defenseTo.setAdapter(defenseAdapter);
+
+        List<String> priceConditionArray = new ArrayList<String>();
+        priceConditionArray.add("Less Than");
+        priceConditionArray.add("Equal To");
+        priceConditionArray.add("Greater Than");
+
+        ArrayAdapter<String> priceConditionAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, priceConditionArray);
+
+        levelRankAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner priceCondition = (Spinner) findViewById(R.id.priceConditionSpinner);
+        priceCondition.setAdapter(priceConditionAdapter);
     }
+
+    //Hide keyboard when tapped outside
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(YugiohSearch.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
 }
