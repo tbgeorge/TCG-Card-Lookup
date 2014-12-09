@@ -6,6 +6,20 @@
     <string name="pokemon">Pokemon</string>
     <string name="wowtcg">World of Warcraft TCG</string>
     <string name="cardfight">Cardfight Vanguard</string>
+    <string name="productName">Product Name:</string>
+    <string name="description">Description:</string>
+    <string name="set">Set:</string>
+    <string name="cardType">Card Type:</string>
+    <string name="monsterType">Monster Type:</string>
+    <string name="rarity">Rarity: </string>
+    <string name="attribute">Attribute:</string>
+    <string name="levelrank">Level/Rank:</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="attack">Attack:</string>
+    <string name="defense">Defense:</string>
+    <string name="price">Price:</string>
+    <string name="currency">$</string>
 
 
 </resources>

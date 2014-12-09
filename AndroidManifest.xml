@@ -13,5 +13,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MagicSearch"/>
+        <activity android:name=".YugiohSearch"/>
+        <activity android:name=".PokemonSearch"/>
+        <activity android:name=".WoWSearch"/>
+        <activity android:name=".CardfightSearch"/>
     </application>
 </manifest>

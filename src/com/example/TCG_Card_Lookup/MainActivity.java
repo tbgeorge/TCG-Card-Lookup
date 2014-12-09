@@ -33,6 +33,38 @@ public class MainActivity extends Activity {
             }
         });
 
+        ygoBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, YugiohSearch.class);
+                startActivity(intent);
+            }
+        });
+
+        pkmBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PokemonSearch.class);
+                startActivity(intent);
+            }
+        });
+
+        wowBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, WoWSearch.class);
+                startActivity(intent);
+            }
+        });
+
+        cvBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CardfightSearch.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 }
