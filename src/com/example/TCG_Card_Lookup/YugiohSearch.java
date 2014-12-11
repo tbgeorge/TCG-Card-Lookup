@@ -41,9 +41,6 @@ import java.util.regex.Pattern;
  */
 public class YugiohSearch extends Activity {
 
-    String searchResultHTML = "";
-    boolean loadCompleted = false;
-
     final Context myApp = this;
 
     @Override
@@ -53,198 +50,20 @@ public class YugiohSearch extends Activity {
         setupUI(findViewById(R.id.main));
         initSpinners();
 
-        Button searchBtn = (Button) findViewById(R.id.searchBtn);
+        final Button searchBtn = (Button) findViewById(R.id.searchBtn);
         final TextView testURL = (TextView) findViewById(R.id.testURL);
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadCompleted = false;
                 String url = formURL();
                 //testURL.setText(url);
-                setContentView(R.layout.searchresults);
-//                new JSOUPget().execute(url);
-                renderSearchResults(url);
+                Intent intent = new Intent(YugiohSearch.this, SearchResults.class);
+                intent.putExtra("url", url);
+                startActivity(intent);
             }
         });
-
-
     }
-
-    /********************* THE PROPER WAY ****** Sometimes doesn't work  **********************/
-
-    /***** Async pull source code from TCGPlayer *****/
-//    private class JSOUPget extends AsyncTask<String, Void, Document> {
-//
-//        protected Document doInBackground(String... urls) {
-//
-//            Document resultHTML = null;
-//            //Pull source code
-//            try {
-//                resultHTML = Jsoup.connect(urls[0]).get();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return resultHTML;
-//        }
-//
-//        protected void onPostExecute(Document result) {
-//            parseHTML(result);
-//        }
-//    }
-//
-//    public void parseHTML(Document doc) {
-//        LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
-//        progress.setVisibility(View.GONE);
-//
-//        LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
-//
-//        Log.d("htmlResponse", doc.html());
-//        //Seller Containers
-//        Elements sellerContainers = doc.getElementsByClass("sellerContainer");
-//
-//        TextView resultCount = new TextView(myApp);
-//        resultCount.setText("Found " + sellerContainers.size() + " results.");
-//        rootElem.addView(resultCount);
-//
-//        //Getting Card Titles
-//        List<Element> titles = new ArrayList<Element>();
-//        for(Element div : sellerContainers) {
-//            Elements title = div.select("h2 a");
-//            for(Element t : title)
-//                titles.add(t);
-//        }
-//
-//        for(Element t : titles) {
-//            TextView cardTitle = new TextView(myApp);
-//            cardTitle.setText(t.html());
-//            rootElem.addView(cardTitle);
-//
-//            final String link = t.attr("href");
-//            cardTitle.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(YugiohSearch.this, CardInfo.class);
-//                    intent.putExtra("url", link);
-//                    startActivity(intent);
-//                }
-//            });
-//        }
-
-//        TextView htmlView = new TextView(myApp);
-//        htmlView.setText(html);
-//        rootElem.addView(htmlView);
-//    }
-
-    /******************************************************************************/
-
-
-    /*********************** THE JANK WAY ****************************************/
-    public void renderSearchResults(String url) {
-        final WebView browser = new WebView(myApp);
-        browser.getSettings().setJavaScriptEnabled(true);
-        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
-
-        browser.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                Log.d("htmlLoad", "Page finished loading...");
-                browser.loadUrl("javascript:window.HTMLOUT.showHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-                Log.d("htmlGet", "Getting html...");
-            }
-        });
-
-        browser.loadUrl(url);
-
-    }
-
-    /* An instance of this class will be registered as a JavaScript interface */
-    class MyJavaScriptInterface
-    {
-        @SuppressWarnings("unused")
-        @JavascriptInterface
-        public void showHTML(String html)
-        {
-            Log.d("htmlSHOW", "Inside showHTML");
-            final String finalHTML = html;
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
-                    progress.setVisibility(View.GONE);
-
-                    LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
-
-                    Document doc = Jsoup.parse(finalHTML);
-                    Log.d("htmlResponse", doc.html());
-                    //Seller Containers
-                    Elements sellerContainers = doc.getElementsByClass("sellerContainer");
-
-                    TextView resultCount = new TextView(myApp);
-                    resultCount.setText("Found " + sellerContainers.size() + " results.");
-                    rootElem.addView(resultCount);
-
-                    //Getting Card Titles
-                    List<Element> titles = new ArrayList<Element>();
-                    for(Element div : sellerContainers) {
-                        Elements title = div.select("h2 a");
-                        for(Element t : title)
-                            titles.add(t);
-                    }
-
-                    for(Element t : titles) {
-                        TextView cardTitle = new TextView(myApp);
-                        cardTitle.setText(t.html());
-                        rootElem.addView(cardTitle);
-
-                        final String link = t.attr("href");
-                        cardTitle.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(YugiohSearch.this, CardInfo.class);
-                                intent.putExtra("url", link);
-                                startActivity(intent);
-                            }
-                        });
-                    }
-
-
-
-
-
-//                    LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
-//                    progress.setVisibility(View.GONE);
-//
-//                    LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
-//
-//                    List<String> allMatches = new ArrayList<String>();
-//                    Matcher m = Pattern.compile("(<div)(\\s+)(class=\"sellerContainer\">)(\\.*)(\\s*)(\\.*)(</h2>)").matcher(finalHTML);
-//                    while(m.find()) {
-//                        allMatches.add(m.group());
-//                    }
-//
-//                    TextView resultSize = new TextView(myApp);
-//                    resultSize.setText("Found " + allMatches.size() + " results");
-//                    rootElem.addView(resultSize);
-//
-//                    for(String match : allMatches) {
-//                        TextView matchView = new TextView(myApp);
-//                        matchView.setText(match);
-//                        rootElem.addView(matchView);
-//                    }
-
-
-//                    resultHTML.setText(finalHTML);
-//                    rootElem.addView(resultHTML);
-                }
-            });
-
-        }
-    }
-
-    /******************************************************************************************/
 
     private String formURL() {
         String baseURL = "http://shop.tcgplayer.com/yugioh";

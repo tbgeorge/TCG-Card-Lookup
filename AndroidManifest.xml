@@ -25,5 +25,7 @@
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
         <activity android:name=".CardInfo"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
+        <activity android:name=".SearchResults"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
     </application>
 </manifest>
