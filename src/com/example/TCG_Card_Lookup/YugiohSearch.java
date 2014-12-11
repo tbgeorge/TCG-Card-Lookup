@@ -1,14 +1,30 @@
 package com.example.TCG_Card_Lookup;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +32,9 @@ import java.util.List;
  * Created by Tyler on 12/2/2014.
  */
 public class YugiohSearch extends Activity {
+
+    String searchResultHTML = "";
+    boolean loadCompleted = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,15 +49,63 @@ public class YugiohSearch extends Activity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadCompleted = false;
                 String url = formURL();
-                testURL.setText(url);
+                //testURL.setText(url);
+                setContentView(R.layout.searchresults);
+                renderSearchResults(url);
             }
         });
 
+
+    }
+
+    final Context myApp = this;
+
+    public void renderSearchResults(String url) {
+        final WebView browser = new WebView(myApp);
+        browser.getSettings().setJavaScriptEnabled(true);
+        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+
+        browser.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                browser.loadUrl("javascript:window.HTMLOUT.showHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+            }
+        });
+
+        browser.loadUrl(url);
+
+    }
+
+    /* An instance of this class will be registered as a JavaScript interface */
+    class MyJavaScriptInterface
+    {
+        @SuppressWarnings("unused")
+        @JavascriptInterface
+        public void showHTML(String html)
+        {
+            final String finalHTML = html;
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
+                    progress.setVisibility(View.GONE);
+
+                    LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
+                    TextView resultHTML = new TextView(myApp);
+
+                    resultHTML.setText(finalHTML);
+                    rootElem.addView(resultHTML);
+                }
+            });
+
+        }
     }
 
     private String formURL() {
-        String baseURL = "shop.tcgplayer.com/yugioh";
+        String baseURL = "http://shop.tcgplayer.com/yugioh";
         String url = baseURL;
 
         Spinner setSpinner = (Spinner) findViewById(R.id.setSpinner);
@@ -52,22 +119,37 @@ public class YugiohSearch extends Activity {
         Spinner monsterTypeSpinner = (Spinner) findViewById(R.id.monsterTypeSpinner);
         String monsterType = monsterTypeSpinner.getSelectedItem().toString();
 
-//        List<>
+        List<CheckBox> rarities = new ArrayList<CheckBox>();
         CheckBox common = (CheckBox) findViewById(R.id.common);
+        rarities.add(common);
         CheckBox rare = (CheckBox) findViewById(R.id.rare);
+        rarities.add(rare);
         CheckBox superRare = (CheckBox) findViewById(R.id.superRare);
+        rarities.add(superRare);
         CheckBox ultraRare = (CheckBox) findViewById(R.id.ultra);
+        rarities.add(ultraRare);
         CheckBox secretRare = (CheckBox) findViewById(R.id.secret);
+        rarities.add(secretRare);
         CheckBox ultimateRare = (CheckBox) findViewById(R.id.ultimate);
+        rarities.add(ultimateRare);
         CheckBox ghostRare = (CheckBox) findViewById(R.id.ghost);
+        rarities.add(ghostRare);
 
+        List<CheckBox> attributes = new ArrayList<CheckBox>();
         CheckBox attrDark = (CheckBox) findViewById(R.id.dark);
+        attributes.add(attrDark);
         CheckBox attrDivine = (CheckBox) findViewById(R.id.divine);
+        attributes.add(attrDivine);
         CheckBox attrEarth = (CheckBox) findViewById(R.id.earth);
+        attributes.add(attrEarth);
         CheckBox attrFire = (CheckBox) findViewById(R.id.fire);
+        attributes.add(attrFire);
         CheckBox attrLight = (CheckBox) findViewById(R.id.light);
+        attributes.add(attrLight);
         CheckBox attrWater = (CheckBox) findViewById(R.id.water);
+        attributes.add(attrWater);
         CheckBox attrWind = (CheckBox) findViewById(R.id.wind);
+        attributes.add(attrWind);
 
         Spinner levelFromSpinner = (Spinner) findViewById(R.id.levelFromSpinner);
         String levelFrom = levelFromSpinner.getSelectedItem().toString();
@@ -99,11 +181,112 @@ public class YugiohSearch extends Activity {
         if(!description.getText().toString().equalsIgnoreCase(""))
             url += "Description=" + convertStrToURLFriendly(description.getText().toString()) + "&";
 
+        if(!cardType.equalsIgnoreCase("All"))
+            url += "CardType=" + convertTypeToURLFriendly(cardType) + "&";
+
+        if(!monsterType.equalsIgnoreCase("All"))
+            url += "MonsterType=" + convertTypeToURLFriendly(monsterType) + "&";
+
+
+        List<String> checkedRarities = new ArrayList<String>();
+        for(int i = 0; i < rarities.size(); i++) {
+            if(rarities.get(i).isChecked()) {
+                String boxText = rarities.get(i).getText().toString();
+                if(boxText.equalsIgnoreCase("rare")) {
+                    checkedRarities.add("Rare");
+                }
+                else if(boxText.contains("Rare")) {
+                    boxText = boxText.substring(0, boxText.length() - 5);
+                    checkedRarities.add(boxText);
+                }
+                else {
+                    checkedRarities.add(boxText);
+                }
+            }
+        }
+
+        if(checkedRarities.size() > 0) {
+            url += "Rarity=";
+            for(int i = 0; i < checkedRarities.size(); i++) {
+                url += checkedRarities.get(i);
+                if(i != checkedRarities.size() - 1) {
+                    url += "%2c";
+                }
+            }
+            url += "&";
+        }
+
+        List<String> checkedAttributes = new ArrayList<String>();
+        for(int i = 0; i < attributes.size(); i++) {
+            if(attributes.get(i).isChecked()) {
+                String boxText = attributes.get(i).getText().toString();
+                checkedAttributes.add(boxText);
+            }
+        }
+
+        if(checkedAttributes.size() > 0) {
+            url += "Attribute=";
+            for(int i = 0; i < checkedAttributes.size(); i++) {
+                url += checkedAttributes.get(i);
+                if(i != checkedAttributes.size() - 1) {
+                    url += "%2c";
+                }
+            }
+            url += "&";
+        }
+
+
+        if(!levelFrom.equalsIgnoreCase("any"))
+            url += "Level_From=" + levelFrom + "&";
+
+        if(!levelTo.equalsIgnoreCase("any"))
+            url += "Level_To=" + levelTo + "&";
+
+        if(!attackFrom.equalsIgnoreCase("any"))
+            url += "Attack_From=" + attackFrom + "&";
+
+        if(!attackTo.equalsIgnoreCase("any"))
+            url += "Attack_To=" + attackTo + "&";
+
+        if(!defenseFrom.equalsIgnoreCase("any"))
+            url += "Defense_From=" + defenseFrom + "&";
+
+        if(!defenseTo.equalsIgnoreCase("any"))
+            url += "Defense_To=" + defenseTo + "&";
+
+        if(!price.getText().toString().equalsIgnoreCase("")) {
+            String priceStr = price.getText().toString();
+            Double priceDbl;
+            boolean notANumber = false;
+            try {
+                priceDbl = Double.parseDouble(priceStr);
+            } catch (NumberFormatException e) {
+                notANumber = true;
+            }
+
+            if(!notANumber)
+                url += "Price_Condition=" + convertStrToURLFriendly(priceCondition) + "&" + "Price=" + priceStr + "&";
+        }
+
+        url = url.substring(0,url.length() - 1);
+
+
         return url;
     }
 
+    private String convertTypeToURLFriendly(String type) {
+        type = type.replace(" ", "");
+        type = type.replace("-", "");
+
+        return type;
+    }
+
     private String convertStrToURLFriendly(String str) {
-        str = str.replace(" ", "+");
+        try {
+            str = URLEncoder.encode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         return str;
     }
@@ -571,7 +754,7 @@ public class YugiohSearch extends Activity {
         levelRankTo.setAdapter(levelRankAdapter);
 
         List<String> attackArray = new ArrayList<String>();
-        attackArray.add("All");
+        attackArray.add("Any");
         attackArray.add("0");
         attackArray.add("100");
         attackArray.add("200");
@@ -634,7 +817,7 @@ public class YugiohSearch extends Activity {
         attackTo.setAdapter(attackAdapter);
 
         List<String> defenseArray = new ArrayList<String>();
-        defenseArray.add("All");
+        defenseArray.add("Any");
         defenseArray.add("0");
         defenseArray.add("100");
         defenseArray.add("200");

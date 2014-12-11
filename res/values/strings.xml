@@ -21,6 +21,7 @@
     <string name="price">Price:</string>
     <string name="currency">$</string>
     <string name="search">Search</string>
+    <string name="searching">Searching...</string>
 
 
 </resources>
