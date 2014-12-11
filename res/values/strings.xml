@@ -7,9 +7,9 @@
     <string name="wowtcg">World of Warcraft TCG</string>
     <string name="cardfight">Cardfight Vanguard</string>
     <string name="productName">Product Name:</string>
-    <string name="description">Description:</string>
+    <string name="description">Description: </string>
     <string name="set">Set:</string>
-    <string name="cardType">Card Type:</string>
+    <string name="cardType">Card Type: </string>
     <string name="monsterType">Monster Type:</string>
     <string name="rarity">Rarity: </string>
     <string name="attribute">Attribute:</string>
@@ -22,6 +22,11 @@
     <string name="currency">$</string>
     <string name="search">Search</string>
     <string name="searching">Searching...</string>
+    <string name="searchResults">Search Results: </string>
+    <string name="setName">Set Name: </string>
+    <string name="number">Number: </string>
+    <string name="level">Level: </string>
+    <string name="atkDef">Atk/Def: </string>
 
 
 </resources>
