@@ -3,6 +3,7 @@ package com.example.TCG_Card_Lookup;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,12 +22,19 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Tyler on 12/2/2014.
@@ -35,6 +43,8 @@ public class YugiohSearch extends Activity {
 
     String searchResultHTML = "";
     boolean loadCompleted = false;
+
+    final Context myApp = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,56 +63,142 @@ public class YugiohSearch extends Activity {
                 String url = formURL();
                 //testURL.setText(url);
                 setContentView(R.layout.searchresults);
-                renderSearchResults(url);
+                new JSOUPget().execute(url);
+//                renderSearchResults(url);
             }
         });
 
 
     }
 
-    final Context myApp = this;
+    /********************* THE PROPER WAY ********************************************/
 
-    public void renderSearchResults(String url) {
-        final WebView browser = new WebView(myApp);
-        browser.getSettings().setJavaScriptEnabled(true);
-        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+    /***** Async pull source code from bing *****/
+    private class JSOUPget extends AsyncTask<String, Void, Document> {
 
-        browser.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                browser.loadUrl("javascript:window.HTMLOUT.showHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+        protected Document doInBackground(String... urls) {
+
+            Document resultHTML = null;
+            //Pull source code
+            try {
+                resultHTML = Jsoup.connect(urls[0]).get();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
 
-        browser.loadUrl(url);
+            return resultHTML;
+        }
 
-    }
-
-    /* An instance of this class will be registered as a JavaScript interface */
-    class MyJavaScriptInterface
-    {
-        @SuppressWarnings("unused")
-        @JavascriptInterface
-        public void showHTML(String html)
-        {
-            final String finalHTML = html;
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
-                    progress.setVisibility(View.GONE);
-
-                    LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
-                    TextView resultHTML = new TextView(myApp);
-
-                    resultHTML.setText(finalHTML);
-                    rootElem.addView(resultHTML);
-                }
-            });
-
+        protected void onPostExecute(Document result) {
+            parseHTML(result);
         }
     }
+
+    public void parseHTML(Document doc) {
+        LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
+        progress.setVisibility(View.GONE);
+
+        LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
+
+        //Seller Containers
+        Elements sellerContainers = doc.getElementsByClass("sellerContainer");
+
+        TextView resultCount = new TextView(myApp);
+        resultCount.setText("Found " + sellerContainers.size() + " results.");
+        rootElem.addView(resultCount);
+
+        //Getting Card Titles
+        List<Element> titles = new ArrayList<Element>();
+        for(Element div : sellerContainers) {
+            Elements title = div.select("h2 a");
+            for(Element t : title)
+                titles.add(t);
+        }
+
+        for(Element t : titles) {
+            TextView cardTitle = new TextView(myApp);
+            cardTitle.setText(t.html());
+            rootElem.addView(cardTitle);
+
+            final String link = t.attr("href");
+            cardTitle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(YugiohSearch.this, CardInfo.class);
+                    intent.putExtra("url", link);
+                    startActivity(intent);
+                }
+            });
+        }
+
+//        TextView htmlView = new TextView(myApp);
+//        htmlView.setText(html);
+//        rootElem.addView(htmlView);
+    }
+
+    /******************************************************************************/
+
+
+    /*********************** THE JANK WAY ****************************************/
+//    public void renderSearchResults(String url) {
+//        final WebView browser = new WebView(myApp);
+//        browser.getSettings().setJavaScriptEnabled(true);
+//        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+//
+//        browser.setWebViewClient(new WebViewClient() {
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                browser.loadUrl("javascript:window.HTMLOUT.showHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+//            }
+//        });
+//
+//        browser.loadUrl(url);
+//
+//    }
+//
+//    /* An instance of this class will be registered as a JavaScript interface */
+//    class MyJavaScriptInterface
+//    {
+//        @SuppressWarnings("unused")
+//        @JavascriptInterface
+//        public void showHTML(String html)
+//        {
+//            final String finalHTML = html;
+//
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    LinearLayout progress = (LinearLayout) findViewById(R.id.progress);
+//                    progress.setVisibility(View.GONE);
+//
+//                    LinearLayout rootElem = (LinearLayout) findViewById(R.id.rootSearchElement);
+//
+//                    List<String> allMatches = new ArrayList<String>();
+//                    Matcher m = Pattern.compile("(<div)(\\s+)(class=\"sellerContainer\">)(\\.*)(\\s*)(\\.*)(</h2>)").matcher(finalHTML);
+//                    while(m.find()) {
+//                        allMatches.add(m.group());
+//                    }
+//
+//                    TextView resultSize = new TextView(myApp);
+//                    resultSize.setText("Found " + allMatches.size() + " results");
+//                    rootElem.addView(resultSize);
+//
+//                    for(String match : allMatches) {
+//                        TextView matchView = new TextView(myApp);
+//                        matchView.setText(match);
+//                        rootElem.addView(matchView);
+//                    }
+//
+//
+////                    resultHTML.setText(finalHTML);
+////                    rootElem.addView(resultHTML);
+//                }
+//            });
+//
+//        }
+//    }
+
+    /******************************************************************************************/
 
     private String formURL() {
         String baseURL = "http://shop.tcgplayer.com/yugioh";
