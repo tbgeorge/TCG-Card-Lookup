@@ -2,32 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-        >
-<LinearLayout android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:layout_gravity="center">
-    <Button android:id="@+id/magicButton"
-            android:layout_width="200dp"
+              android:layout_height="fill_parent">
+    <RelativeLayout android:layout_width="wrap_content"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical"
+                  android:layout_gravity="center">
+
+        <ImageView
+            android:layout_marginTop="100dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/magic"/>
-    <Button android:id="@+id/yugiohButton"
-            android:layout_width="200dp"
+            android:id="@+id/ygoImg"
+            android:src="@drawable/ygologo"/>
+        <ImageView
+            android:layout_marginTop="-30dp"
+            android:layout_below="@id/ygoImg"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/yugioh"/>
-    <Button android:id="@+id/pokemonButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="@string/pokemon"/>
-    <Button android:id="@+id/wowButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="@string/wowtcg"/>
-    <Button android:id="@+id/cvButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="@string/cardfight"/>
-              </LinearLayout>
+            android:id="@+id/tcgImg"
+            android:src="@drawable/tcglogo"/>
+        <Button android:id="@+id/yugiohButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/searchCards"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="100dp"/>
+    </RelativeLayout>
 </LinearLayout>
 

@@ -1,11 +1,14 @@
 package com.example.TCG_Card_Lookup;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -171,6 +174,7 @@ public class SearchResults extends Activity {
                                     cards.add(e);
                             }
                             //Log.d("NumberOfCards", "" + cards.size());
+                            int counter = 0;
                             for (Element card : cards) {
                                 LinearLayout cardLayout = new LinearLayout(myApp);
                                 cardLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -194,6 +198,18 @@ public class SearchResults extends Activity {
                                 cardLayout.setLayoutParams(cardLayoutParams);
 
                                 rootElem.addView(cardLayout);
+                                counter++;
+
+                                if(!(counter == cards.size())) {
+
+                                    ImageView seperator = new ImageView(myApp);
+                                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dipToPixels(myApp, 3f));
+                                    seperator.setBackgroundColor(Color.parseColor("#33cccccc"));
+                                    seperator.setLayoutParams(params);
+
+                                    rootElem.addView(seperator);
+                                }
+
 
                             }
 
@@ -204,6 +220,9 @@ public class SearchResults extends Activity {
                             TextView resultCount = new TextView(myApp);
                             resultCount.setText(results);
                             header.addView(resultCount);
+
+                            TextView searchHdr = (TextView) findViewById(R.id.search_header);
+                            searchHdr.setText("Search Results");
 
                             //Getting Card Titles
                             //                    List<Element> titles = new ArrayList<Element>();

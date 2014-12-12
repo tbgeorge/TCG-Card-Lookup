@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TCG Card Lookup</string>
-    <string name="magic">Magic: The Gathering</string>
+    <string name="app_name">YGO Card Lookup</string>
     <string name="yugioh">Yu-Gi-Oh!</string>
-    <string name="pokemon">Pokemon</string>
-    <string name="wowtcg">World of Warcraft TCG</string>
-    <string name="cardfight">Cardfight Vanguard</string>
+    <string name="searchCards">Search Cards</string>
     <string name="productName">Product Name:</string>
     <string name="description">Description: </string>
     <string name="set">Set:</string>
@@ -27,6 +24,7 @@
     <string name="number">Number: </string>
     <string name="level">Level: </string>
     <string name="atkDef">Atk/Def: </string>
+    <string name="searchFilters">Search Filters</string>
 
 
 </resources>

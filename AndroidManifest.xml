@@ -13,15 +13,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MagicSearch"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
         <activity android:name=".YugiohSearch"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
-        <activity android:name=".PokemonSearch"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
-        <activity android:name=".WoWSearch"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
-        <activity android:name=".CardfightSearch"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
         <activity android:name=".CardInfo"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
