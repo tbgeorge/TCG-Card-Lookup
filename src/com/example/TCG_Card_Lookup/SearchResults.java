@@ -188,6 +188,7 @@ public class SearchResults extends Activity {
                                 String title = card.getElementsByClass("sellerContainer").first().select("h2 a").first().html();
                                 cardTitle.setText(title);
                                 cardTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
+                                cardTitle.setPadding(dipToPixels(myApp, 5f), 0, 0, 0);
 
                                 cardLayout.addView(cardImage);
                                 cardLayout.addView(cardTitle);

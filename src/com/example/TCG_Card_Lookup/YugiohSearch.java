@@ -57,6 +57,7 @@ public class YugiohSearch extends Activity {
             @Override
             public void onClick(View v) {
                 String url = formURL();
+                Log.d("htmlURL", url);
                 //testURL.setText(url);
                 Intent intent = new Intent(YugiohSearch.this, SearchResults.class);
                 intent.putExtra("url", url);
@@ -255,6 +256,7 @@ public class YugiohSearch extends Activity {
     private String convertSetToURLFriendly(String str) {
         str = str.replace("'", "");
         str = str.replace(" ", "-");
+        str = str.replace(":", "");
         str = str.toLowerCase();
         return str;
     }
@@ -664,7 +666,6 @@ public class YugiohSearch extends Activity {
         monsterTypeArray.add("Aqua");
         monsterTypeArray.add("Beast");
         monsterTypeArray.add("Beast-Warrior");
-        monsterTypeArray.add("Creator God");
         monsterTypeArray.add("Dinosaur");
         monsterTypeArray.add("Divine-Beast");
         monsterTypeArray.add("Dragon");

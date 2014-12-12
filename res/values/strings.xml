@@ -25,6 +25,7 @@
     <string name="level">Level: </string>
     <string name="atkDef">Atk/Def: </string>
     <string name="searchFilters">Search Filters</string>
+    <string name="loadingCard">Loading Card Info...</string>
 
 
 </resources>
